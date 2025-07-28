@@ -52,9 +52,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.CodeDom, Version=9.0.0.7, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.CodeDom.9.0.7\lib\net462\System.CodeDom.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -76,15 +80,29 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.vb" />
-    <Compile Include="Form1.Designer.vb">
-      <DependentUpon>Form1.vb</DependentUpon>
+    <Compile Include="Classes\HardwareInfoCollector.vb" />
+    <Compile Include="Classes\NetworkInfoCollector.vb" />
+    <Compile Include="Classes\SecurityInfoCollector.vb" />
+    <Compile Include="Classes\SoftwareInfoCollector.vb" />
+    <Compile Include="Classes\UserSessionCollector.vb" />
+    <Compile Include="Forms\SysCollectoPro.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\SysCollectoPro.Designer.vb">
+      <DependentUpon>SysCollectoPro.vb</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Helpers\CsvExportHelper.vb" />
+    <Compile Include="Helpers\IniFileHelper.vb" />
+    <Compile Include="Helpers\PowerShellHelper.vb" />
+    <Compile Include="Helpers\WmiHelper.vb" />
+    <Compile Include="Models\AuditCommand.vb" />
+    <Compile Include="Models\SystemAuditModel.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="My Project\Resources.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -96,10 +114,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Classes\SystemInfoCollector.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.vb</DependentUpon>
+    <EmbeddedResource Include="Forms\SysCollectoPro.resx">
+      <DependentUpon>SysCollectoPro.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -119,6 +138,7 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="WindowsSpecificationIcon.ico" />
