@@ -32,6 +32,7 @@ Partial Class SysCollectoPro
         Me.LblPosition = New System.Windows.Forms.Label()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.LblCopyright = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.BgWorkerExport = New System.ComponentModel.BackgroundWorker()
         Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -149,4 +150,5 @@ Partial Class SysCollectoPro
     Friend WithEvents LblPosition As Label
     Friend WithEvents StatusStrip1 As StatusStrip
     Friend WithEvents LblCopyright As ToolStripStatusLabel
+    Friend WithEvents BgWorkerExport As System.ComponentModel.BackgroundWorker
 End Class
