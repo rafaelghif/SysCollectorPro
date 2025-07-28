@@ -20,19 +20,31 @@ Public Class SystemInfoCollector
         Return (name, version, arch, installDate)
     End Function
 
-    Public Shared Function GetBIOSInfo() As (BIOSVersion As String, BIOSDate As String)
-        Dim biosVersion As String = "", biosDate As String = ""
+    Public Shared Function GetBIOSInfo() As (BIOSVersion As String, BIOSDate As String, SerialNumber As String)
+        Dim biosVersion As String = ""
+        Dim biosDate As String = ""
+        Dim serialNumber As String = ""
+
         Try
             Dim searcher As New ManagementObjectSearcher("SELECT * FROM Win32_BIOS")
             For Each bios As ManagementObject In searcher.Get()
                 biosVersion = TryCast(bios("SMBIOSBIOSVersion"), String)
-                biosDate = ManagementDateTimeConverter.ToDateTime(bios("ReleaseDate").ToString()).ToString("yyyy-MM-dd")
-                Exit For
+                serialNumber = TryCast(bios("SerialNumber"), String)
+
+                Dim rawDate = TryCast(bios("ReleaseDate"), String)
+                If Not String.IsNullOrEmpty(rawDate) Then
+                    biosDate = ManagementDateTimeConverter.ToDateTime(rawDate).ToString("yyyy-MM-dd")
+                End If
+
+                Exit For ' Only use the first result
             Next
-        Catch
+        Catch ex As Exception
+            ' Optional: Log or handle error
         End Try
-        Return (biosVersion, biosDate)
+
+        Return (biosVersion, biosDate, serialNumber)
     End Function
+
 
     Public Shared Function GetWindowsActivationStatus() As String
         Try
@@ -169,6 +181,64 @@ Public Class SystemInfoCollector
         Catch ex As Exception
             Return "[Error] " & ex.Message
         End Try
+    End Function
+
+    Public Shared Function GetSystemModelInfo() As (Manufacturer As String, Model As String, SKU As String, Name As String, Version As String, InstallDate As String, Architecture As String)
+        Dim manufacturer As String = ""
+        Dim model As String = ""
+        Dim sku As String = ""
+        Dim name As String = ""
+        Dim version As String = ""
+        Dim installDate As String = ""
+        Dim architecture As String = ""
+
+        Try
+            ' Get Manufacturer, Model, SKU from ComputerSystem
+            Using searcher As New ManagementObjectSearcher("SELECT Manufacturer, Model, SystemSKUNumber FROM Win32_ComputerSystem")
+                For Each mo As ManagementObject In searcher.Get()
+                    manufacturer = mo("Manufacturer")?.ToString().Trim()
+                    model = mo("Model")?.ToString().Trim()
+                    sku = mo("SystemSKUNumber")?.ToString().Trim()
+                    Exit For
+                Next
+            End Using
+
+            ' Get OS info from OperatingSystem
+            Using osSearcher As New ManagementObjectSearcher("SELECT Caption, Version, InstallDate, OSArchitecture FROM Win32_OperatingSystem")
+                For Each os As ManagementObject In osSearcher.Get()
+                    name = os("Caption")?.ToString().Trim()
+                    version = os("Version")?.ToString().Trim()
+                    Dim rawDate = TryCast(os("InstallDate"), String)
+                    If Not String.IsNullOrWhiteSpace(rawDate) Then
+                        installDate = ManagementDateTimeConverter.ToDateTime(rawDate).ToString("yyyy-MM-dd")
+                    End If
+                    architecture = os("OSArchitecture")?.ToString().Trim()
+                    Exit For
+                Next
+            End Using
+
+        Catch ex As Exception
+            ' Optional: log or handle
+        End Try
+
+        Return (manufacturer, model, sku, name, version, installDate, architecture)
+    End Function
+
+    Public Shared Function GetServiceTag() As String
+        Try
+            Using searcher As New ManagementObjectSearcher("SELECT SerialNumber FROM Win32_BIOS")
+                For Each mo As ManagementObject In searcher.Get()
+                    Dim sn = mo("SerialNumber")?.ToString().Trim()
+                    If Not String.IsNullOrWhiteSpace(sn) Then
+                        Return sn
+                    End If
+                Next
+            End Using
+        Catch ex As Exception
+            ' Log error if needed
+        End Try
+
+        Return ""
     End Function
 
 End Class

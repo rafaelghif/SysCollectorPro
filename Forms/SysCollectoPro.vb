@@ -57,7 +57,6 @@ Public Class SysCollectoPro
         Me.Close()
     End Sub
 
-
     Private Function CreateSystemAuditModel() As SystemAuditModel
         Dim cpuList = HardwareInfoCollector.GetCpuInfoList()
         Dim ramList = HardwareInfoCollector.GetRamInfoList()
@@ -65,46 +64,49 @@ Public Class SysCollectoPro
         Dim gpuList = HardwareInfoCollector.GetGpuInfoList()
         Dim netAdapters = NetworkInfoCollector.GetNetworkInfoList()
         Dim motherboard = HardwareInfoCollector.GetMotherboardInfo()
-        Dim os = SystemInfoCollector.GetOSInfo()
         Dim bios = SystemInfoCollector.GetBIOSInfo()
+        Dim sysInfo = SystemInfoCollector.GetSystemModelInfo()
 
         Return New SystemAuditModel With {
-        .Hostname = Environment.MachineName,
-        .ChassisType = HardwareInfoCollector.GetChassisType(),
-        .SerialNumber = motherboard.SerialNumber,
-        .Manufacturer = motherboard.Manufacturer,
-        .Model = motherboard.Product,
-        .BIOSVersion = bios.BIOSVersion,
-        .BIOSDate = bios.BIOSDate,
-        .Domain = SystemInfoCollector.GetDomainName(),
-        .LoggedInUser = SystemInfoCollector.GetLoggedInUser(),
-        .AdminUser = UserSessionCollector.IsCurrentUserAdmin(),
-        .CPUs = cpuList,
-        .TotalCPUCores = cpuList.Sum(Function(r) r.CoreCount),
-        .RAMModules = ramList,
-        .RAMTotalGB = CInt(Math.Floor(ramList.Sum(Function(r) r.CapacityMB) / 1024.0)),
-        .StorageDevices = storageList,
-        .StorageTotalGB = storageList.Sum(Function(r) r.SizeGB),
-        .TotalStorageCount = storageList.Count,
-        .GPUs = gpuList,
-        .TotalGpuCount = gpuList.Count,
-        .OSName = $"{os.Name} ({os.Version})",
-        .OSVersion = $"{SystemInfoCollector.GetOSDisplayVersion()} (Build {SystemInfoCollector.GetOSFullBuildVersion()})",
-        .InstallDate = os.InstallDate,
-        .Architecture = os.Architecture,
-        .LastBootTime = SystemInfoCollector.GetLastBootTime(),
-        .WindowsActivated = SystemInfoCollector.IsWindowsActivated(),
-        .NetworkAdapters = netAdapters,
-        .SecureBoot = SecurityInfoCollector.GetSecureBootStatus(),
-        .TPMVersion = SecurityInfoCollector.GetTPMStatus(),
-        .BitLockerStatus = SecurityInfoCollector.GetBitLockerStatus(),
-        .AntivirusStatus = SecurityInfoCollector.GetDefenderStatus(),
-        .Site = TxtSite.Text.Trim(),
-        .Zone = TxtZone.Text.Trim(),
-        .Position = TxtPosition.Text.Trim(),
-        .Notes = "",
-        .AuditDate = Date.Now
-    }
+            .Hostname = Environment.MachineName,
+            .ChassisType = HardwareInfoCollector.GetChassisType(),
+            .SystemSerial = bios.SerialNumber,
+            .SystemManufacturer = sysInfo.manufacturer,
+            .SystemModel = sysInfo.model,
+            .SystemSKU = sysInfo.sku,
+            .MotherboardModel = motherboard.Product,
+            .MotherboardSerial = motherboard.SerialNumber,
+            .BIOSVersion = bios.BIOSVersion,
+            .BIOSDate = bios.BIOSDate,
+            .Domain = SystemInfoCollector.GetDomainName(),
+            .LoggedInUser = SystemInfoCollector.GetLoggedInUser(),
+            .AdminUser = UserSessionCollector.IsCurrentUserAdmin(),
+            .CPUs = cpuList,
+            .TotalCPUCores = cpuList.Sum(Function(r) r.CoreCount),
+            .RAMModules = ramList,
+            .RAMTotalGB = CInt(Math.Floor(ramList.Sum(Function(r) r.CapacityMB) / 1024.0)),
+            .StorageDevices = storageList,
+            .StorageTotalGB = storageList.Sum(Function(r) r.SizeGB),
+            .TotalStorageCount = storageList.Count,
+            .GPUs = gpuList,
+            .TotalGpuCount = gpuList.Count,
+            .OSName = $"{sysInfo.Name} ({sysInfo.Version})",
+            .OSVersion = $"{SystemInfoCollector.GetOSDisplayVersion()} (Build {SystemInfoCollector.GetOSFullBuildVersion()})",
+            .InstallDate = sysInfo.InstallDate,
+            .Architecture = sysInfo.Architecture,
+            .LastBootTime = SystemInfoCollector.GetLastBootTime(),
+            .WindowsActivated = SystemInfoCollector.IsWindowsActivated(),
+            .NetworkAdapters = netAdapters,
+            .SecureBoot = SecurityInfoCollector.GetSecureBootStatus(),
+            .TPMVersion = SecurityInfoCollector.GetTPMStatus(),
+            .BitLockerStatus = SecurityInfoCollector.GetBitLockerStatus(),
+            .AntivirusStatus = SecurityInfoCollector.GetDefenderStatus(),
+            .Site = TxtSite.Text.Trim(),
+            .Zone = TxtZone.Text.Trim(),
+            .Position = TxtPosition.Text.Trim(),
+            .Notes = "",
+            .AuditDate = Date.Now
+        }
     End Function
 
     Private Function ValidateInput() As Boolean

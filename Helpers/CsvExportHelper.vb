@@ -5,30 +5,36 @@ Public Class CsvExportHelper
 
     Public Shared Sub ExportAudit(audit As SystemAuditModel, outputPath As String)
         Dim headers As String() = {
-            "Hostname", "ChassisType", "SerialNumber", "Manufacturer", "Model", "BIOSVersion", "BIOSDate",
-            "CPUs", "TotalCPUCores",
-            "RAMModules", "RAMTotalGB",
-            "StorageDevices", "StorageTotalGB", "TotalStorageCount",
-            "GPUs", "TotalGpuCount",
-            "OSName", "OSVersion", "InstallDate", "Architecture", "SecureBoot", "TPMVersion",
-            "BitLockerStatus", "Domain", "LoggedInUser", "LastBootTime",
-            "NetworkAdapters",
-            "AdminUser", "WindowsActivated", "AntivirusStatus",
-            "Site", "Zone", "Position", "Notes", "AuditDate"
-        }
+        "Hostname", "ChassisType",
+        "SystemSerial", "SystemManufacturer", "SystemModel", "SystemSKU",
+        "MotherboardModel", "MotherboardSerial",
+        "BIOSVersion", "BIOSDate",
+        "CPUs", "TotalCPUCores",
+        "RAMModules", "RAMTotalGB",
+        "StorageDevices", "StorageTotalGB", "TotalStorageCount",
+        "GPUs", "TotalGpuCount",
+        "OSName", "OSVersion", "InstallDate", "Architecture", "SecureBoot", "TPMVersion",
+        "BitLockerStatus", "Domain", "LoggedInUser", "LastBootTime",
+        "NetworkAdapters",
+        "AdminUser", "WindowsActivated", "AntivirusStatus",
+        "Site", "Zone", "Position", "Notes", "AuditDate"
+    }
 
         Dim values As String() = {
-        Quote(audit.Hostname), Quote(audit.ChassisType), Quote(audit.SerialNumber), Quote(audit.Manufacturer), Quote(audit.Model), Quote(audit.BIOSVersion), Quote(audit.BIOSDate),
-        Quote(FlattenCpuInfo(audit.CPUs)), audit.TotalCPUCores.ToString(),
-        Quote(FlattenRamInfo(audit.RAMModules)), audit.RAMTotalGB.ToString(),
-        Quote(FlattenStorageInfo(audit.StorageDevices)), audit.StorageTotalGB.ToString(), audit.TotalStorageCount.ToString(),
-        Quote(FlattenGpuInfo(audit.GPUs)), audit.TotalGpuCount.ToString(),
-        Quote(audit.OSName), Quote(audit.OSVersion), Quote(audit.InstallDate), Quote(audit.Architecture), Quote(audit.SecureBoot), Quote(audit.TPMVersion),
-        Quote(audit.BitLockerStatus), Quote(audit.Domain), Quote(audit.LoggedInUser), Quote(audit.LastBootTime),
-        Quote(FlattenNetworkInfo(audit.NetworkAdapters)),
-        audit.AdminUser.ToString(), audit.WindowsActivated.ToString(), Quote(audit.AntivirusStatus),
-        Quote(audit.Site), Quote(audit.Zone), Quote(audit.Position), Quote(audit.Notes), Quote(audit.AuditDate.ToString("yyyy-MM-dd HH:mm:ss"))
-    }
+            Quote(audit.Hostname), Quote(audit.ChassisType),
+            Quote(audit.SystemSerial), Quote(audit.SystemManufacturer), Quote(audit.SystemModel), Quote(audit.SystemSKU),
+            Quote(audit.MotherboardModel), Quote(audit.MotherboardSerial),
+            Quote(audit.BIOSVersion), Quote(audit.BIOSDate),
+            Quote(FlattenCpuInfo(audit.CPUs)), audit.TotalCPUCores.ToString(),
+            Quote(FlattenRamInfo(audit.RAMModules)), audit.RAMTotalGB.ToString(),
+            Quote(FlattenStorageInfo(audit.StorageDevices)), audit.StorageTotalGB.ToString(), audit.TotalStorageCount.ToString(),
+            Quote(FlattenGpuInfo(audit.GPUs)), audit.TotalGpuCount.ToString(),
+            Quote(audit.OSName), Quote(audit.OSVersion), Quote(audit.InstallDate), Quote(audit.Architecture), Quote(audit.SecureBoot), Quote(audit.TPMVersion),
+            Quote(audit.BitLockerStatus), Quote(audit.Domain), Quote(audit.LoggedInUser), Quote(audit.LastBootTime),
+            Quote(FlattenNetworkInfo(audit.NetworkAdapters)),
+            audit.AdminUser.ToString(), audit.WindowsActivated.ToString(), Quote(audit.AntivirusStatus),
+            Quote(audit.Site), Quote(audit.Zone), Quote(audit.Position), Quote(audit.Notes), Quote(audit.AuditDate.ToString("yyyy-MM-dd HH:mm:ss"))
+        }
 
         Try
             Dim fileExists As Boolean = File.Exists(outputPath)
@@ -47,7 +53,6 @@ Public Class CsvExportHelper
                 sw.WriteLine(String.Join(",", values))
             End Using
         Catch ex As Exception
-            ' Optional: handle error or log
             MessageBox.Show("Export failed: " & ex.Message, "ExportAudit", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub

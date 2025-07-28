@@ -5,7 +5,7 @@ Public Class NetworkInfoCollector
         Dim result As New List(Of NetworkInfo)
 
         Try
-            Dim adapterSearcher As New ManagementObjectSearcher("SELECT * FROM Win32_NetworkAdapter")
+            Dim adapterSearcher As New ManagementObjectSearcher("SELECT * FROM Win32_NetworkAdapter WHERE PhysicalAdapter = TRUE")
             Dim configSearcher As New ManagementObjectSearcher("SELECT * FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled = TRUE")
 
             Dim configMap As New Dictionary(Of Integer, ManagementObject)
@@ -16,6 +16,11 @@ Public Class NetworkInfoCollector
             Next
 
             For Each adapter As ManagementObject In adapterSearcher.Get()
+                Dim adapterTypeID As Integer = If(adapter("AdapterTypeID") IsNot Nothing, Convert.ToInt32(adapter("AdapterTypeID")), -1)
+
+                ' Only include Ethernet (0) and Wireless (9)
+                If adapterTypeID <> 0 AndAlso adapterTypeID <> 9 Then Continue For
+
                 Dim index As Integer = Convert.ToInt32(adapter("Index"))
                 Dim statusCode As Integer = If(adapter("NetConnectionStatus") IsNot Nothing, Convert.ToInt32(adapter("NetConnectionStatus")), -1)
                 Dim connectionStatus As String = GetConnectionStatusText(statusCode)
@@ -75,7 +80,6 @@ Public Class NetworkInfoCollector
 
         Return result
     End Function
-
 
     Private Shared Function GetConnectionStatusText(code As Integer) As String
         Select Case code

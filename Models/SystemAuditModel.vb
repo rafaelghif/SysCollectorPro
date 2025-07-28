@@ -3,9 +3,15 @@
     ' --- System Identity ---
     Public Property Hostname As String
     Public Property ChassisType As String
-    Public Property SerialNumber As String
-    Public Property Manufacturer As String
-    Public Property Model As String
+
+    Public Property SystemSerial As String
+    Public Property SystemManufacturer As String
+    Public Property SystemModel As String
+    Public Property SystemSKU As String
+
+    Public Property MotherboardModel As String
+    Public Property MotherboardSerial As String
+
     Public Property BIOSVersion As String
     Public Property BIOSDate As String
     Public Property Domain As String
